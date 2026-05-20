@@ -3,7 +3,8 @@ import {PORT} from '@utils/config.util.js';
 import {initJobURLWorker} from '@/utils/bullQ.util.js';
 import Scrapper from '@/services/scrapper.service.js'
 import {everyHourTask} from '@utils/cron.util.js';
-
+import {config} from 'dotenv';
+config();
 const app = express();
 initJobURLWorker();
 

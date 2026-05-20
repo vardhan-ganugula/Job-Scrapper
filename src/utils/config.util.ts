@@ -1,3 +1,6 @@
+import {config} from 'dotenv';
+config();
+
 export const PORT : Number = Number(process.env.PORT) || 3000;
 export const telegramBotToken : string = process.env.TELEGRAM_TOKEN || '';
 export const openaiApiKey : string = process.env.OPENAI_API_KEY || '';
