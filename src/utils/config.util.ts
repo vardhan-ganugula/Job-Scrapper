@@ -13,4 +13,4 @@ export const dbURL : string = process.env.DATABASE_URL || '';
 export const email : string = process.env.EMAIL_USER || '';
 export const emailPass : string = process.env.EMAIL_PASS || '';
 export const EMAIL : string = process.env.EMAIL_RECEIVER || "keyon38493@hidevak.com";
-export const CRON_EXPRESSION : string = process.env.CRON_EXPRESSION || "0 * * * *";
+export const CRON_EXPRESSION : string = process.env.CRON_EXPRESSION || "*/1 * * * *";
