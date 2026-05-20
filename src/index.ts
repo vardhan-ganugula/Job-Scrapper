@@ -16,9 +16,9 @@ const scrapper = new Scrapper();
 // Schedule the job URL worker to run every hour
 everyHourTask(async () => {
     await scrapper.searchJobs(323432,
-        "full stack developer OR frontend developer OR backend developer",
+        "full stack developer OR data analyst",
         "India",
-        "internship,entry level,associate",
+        "internship,entry level",
         "remote,hybrid,on-site",
         "full-time,internship",
     );

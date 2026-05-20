@@ -4,7 +4,7 @@ import Scrapper from "@/services/scrapper.service.js";
 import { db } from "@db/index.js";
 import { jobs, type InsertJob } from "@db/schema.js";
 import AI from "@/services/ai.service.js";
-import { prepareEmailBody, sendEmail } from "@/services/mail.service.js";
+import { createCoverLetter, prepareEmailBody, sendEmail } from "@/services/mail.service.js";
 
 
 const redisConnection = {
@@ -38,7 +38,6 @@ export async function initJobURLWorker() {
     const jobURLWorkder = new Worker<JobLinkData>('job_links', async (job) => {
         console.info(`Processing job ${job.id} with data:`);
         const data: JobLinkData = job.data;
-        console.info(job.data);
         try {
             const url = data?.url;
             if (!url) {
@@ -48,8 +47,9 @@ export async function initJobURLWorker() {
             const result = await scrapper.getJobDetailsFromLink(url);
             result.url = url;
             const res = await ai.compareJOBDescriptions(result.description ?? "No description provided");
+            const parsedRes = JSON.parse(res)
             const emailBody = prepareEmailBody(res, result);
-            console.info('Email: ', EMAIL)
+            const pdfBuffer = await createCoverLetter(parsedRes?.coverLetter)
             const insertData: InsertJob = {
                 jobTitle: result.jobTitle ?? "Unknown",
                 companyName: result.companyName ?? "Unknown",
@@ -72,7 +72,7 @@ export async function initJobURLWorker() {
                 console.info(`Job with URL ${data.url} already exists in the database. Skipping insertion.`);
                 return { success: false, message: "Job already exists." };
             } 
-            sendEmail(EMAIL, `New Job Processed: ${result.jobTitle ?? "Unknown Position"}`, emailBody);
+            await sendEmail(EMAIL, `New Job Processed: ${result.jobTitle ?? "Unknown Position"}`, emailBody, pdfBuffer);
                 
             return {
                 success: true,

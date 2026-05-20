@@ -1,7 +1,8 @@
 import nodemailer from "nodemailer";
 import { email, emailPass } from "@utils/config.util.js";
 import type { InsertJob } from "@/db/schema.js";
-
+import {marked} from 'marked';
+import puppeteer from "puppeteer";
 
 const transporter = nodemailer.createTransport({
     host: "smtp.gmail.com",
@@ -13,19 +14,66 @@ const transporter = nodemailer.createTransport({
     }
 });
 
-export async function sendEmail(to: string, subject: string, text: string) {
+export async function sendEmail(to: string, subject: string, text: string, pdfBuffer: Buffer) {
     try {
         const info = await transporter.sendMail({
             from: email,
             to,
             subject,
-            html: text
+            html: text,
+            attachments: [
+              {
+                filename: 'cover-letter.pdf',
+                content: pdfBuffer,
+                contentType: "application/pdf",
+              }
+            ]
         });
         console.log("Email sent: " + info.response);
     } catch (error) {
         console.error("Error sending email:", error);
     }
 }
+
+export const createCoverLetter = async (
+  markdown: string
+): Promise<Buffer> => {
+
+  // Markdown -> HTML
+  const html = marked(markdown);
+
+  const fullHtml = `
+    <html>
+      <body style="
+        font-family: Arial;
+        padding: 40px;
+        line-height: 1.7;
+      ">
+        ${html}
+      </body>
+    </html>
+  `;
+
+  const browser = await puppeteer.launch({
+    headless: true,
+  });
+
+  const page = await browser.newPage();
+
+  await page.setContent(fullHtml, {
+    waitUntil: "load",
+  });
+
+  // Generate PDF buffer
+  const pdfBuffer = await page.pdf({
+    format: "A4",
+    printBackground: true,
+  });
+
+  await browser.close();
+
+  return Buffer.from(pdfBuffer);
+};
 
 export function prepareEmailBody(res: string, result: Partial<InsertJob>): string {
 

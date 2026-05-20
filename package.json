@@ -10,16 +10,18 @@
     "drizzle-orm": "^0.45.2",
     "express": "^5.2.1",
     "jsonwebtoken": "^9.0.3",
+    "marked": "^18.0.4",
     "node-cron": "^4.2.1",
     "nodemailer": "^8.0.7",
     "openai": "^6.37.0",
-    "puppeteer": "^24.43.0"
+    "puppeteer": "^24.43.1"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
     "@types/express": "^5.0.6",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^25.6.0",
+    "@types/pdfkit": "^0.17.6",
     "drizzle-kit": "^0.31.10",
     "ts-node": "^10.9.2",
     "tsc-alias": "^1.8.17",

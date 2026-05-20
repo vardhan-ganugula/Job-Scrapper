@@ -165,7 +165,8 @@ Return a JSON object that strictly adheres to the schema below. No conversationa
   },
   "strengths": ["Grounded point 1", "Grounded point 2"],
   "weaknesses": ["Grounded point 1", "Grounded point 2"],
-  "improvement_suggestions": ["Actionable step 1", "Actionable step 2"]
+  "improvement_suggestions": ["Actionable step 1", "Actionable step 2"],
+  "coverLetter" : "cover leter information for that job for the user in markdown format"
 }
 `
         }
