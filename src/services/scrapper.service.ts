@@ -1,25 +1,25 @@
 import * as cheerio from "cheerio";
-import puppeteer, {type Page} from "puppeteer";
-import {addURLJobProcess} from "@/utils/bullQ.util.js";
+import puppeteer, { type Page } from "puppeteer";
+import { addURLJobProcess } from "@/utils/bullQ.util.js";
 import type { InsertJob } from "@/db/schema.js";
 import { getRandomUserAgent } from "@/utils/userAgents.js";
 
 class Scrapper {
-    private linkedinURL : string;
+  private linkedinURL: string;
 
   constructor() {
     this.linkedinURL = "https://www.linkedin.com/jobs/search/";
   }
 
   async searchJobs(
-    userId : number,
-    keyword : string = "reactjs",
-    location : string = "india",
-    experienceLevel : string = "",
-    remote : string = "",
-    jobType : string = "",
-    easyApply : boolean = true,
-    time : number = 3600
+    userId: number,
+    keyword: string = "reactjs",
+    location: string = "india",
+    experienceLevel: string = "",
+    remote: string = "",
+    jobType: string = "",
+    easyApply: boolean = true,
+    time: number = 3600
   ) {
     const linkedinURL = this.__makeLinkedinURL(
       keyword,
@@ -34,29 +34,29 @@ class Scrapper {
     const { browser, page } = await this.__initBrowser();
     try {
       const linkedinHTML = await this.__gotoAndGetHTML(page, linkedinURL);
-      let jobLinks = this.__getJobLinks(linkedinHTML); 
+      let jobLinks = this.__getJobLinks(linkedinHTML);
       console.log(`Found ${jobLinks.length} job links. Adding to queue...`);
       for (const link of jobLinks) {
         await addURLJobProcess({ userId, url: link });
-      } 
+      }
 
     } finally {
       await browser.close();
     }
   }
 
-  public async getJobDetailsFromLink(link : string) : Promise<Partial<InsertJob>> {
+  public async getJobDetailsFromLink(link: string): Promise<Partial<InsertJob>> {
     const { browser, page } = await this.__initBrowser();
-    let result : Partial<InsertJob> = {};
+    let result: Partial<InsertJob> = {};
     try {
       const normalized = this.__normalizeLinkedinLink(link);
       const html = await this.__gotoAndGetHTML(page, normalized);
       let details = await this.__extractJobDetails(html);
-      const {description, jobTitle} = details;
-      if(description === '' || jobTitle === '') throw new Error('Failed to extract essential job details');
-        result = details;
-      } 
-    catch (error : unknown) {
+      const { description, jobTitle } = details;
+      if (description === '' || jobTitle === '') throw new Error('Failed to extract essential job details');
+      result = details;
+    }
+    catch (error: unknown) {
       console.error(`Error processing job link ${link}:`, (error as Error)?.message);
     }
     finally {
@@ -141,7 +141,12 @@ class Scrapper {
   private async __initBrowser() {
     const browser = await puppeteer.launch({
       headless: true,
-      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+      args: [
+        "--no-sandbox",
+        "--disable-setuid-sandbox",
+        "--disable-dev-shm-usage",
+        "--disable-gpu"
+      ]
     });
     const page = await browser.newPage();
     await page.setUserAgent(
@@ -150,29 +155,29 @@ class Scrapper {
     return { browser, page };
   }
 
-  private async __gotoAndGetHTML(page : Page, url : string) {
+  private async __gotoAndGetHTML(page: Page, url: string) {
     // console.log("🌐 Navigating to LinkedIn page...");
-    await page.goto(url, { waitUntil: "networkidle2", timeout: 60000 });
+    await page.goto(url, { waitUntil: "domcontentloaded", timeout: 60000 });
     await this.__delay(500);
-// 
+    // 
     try {
       if (/\/jobs\/search\//.test(url)) {
         await page.waitForSelector('ul.jobs-search__results-list', { timeout: 5000 });
       } else if (/\/jobs\/view\//.test(url)) {
         await page.waitForSelector('.show-more-less-html, .description__text', { timeout: 5000 });
       }
-    } catch {}
-// 
+    } catch { }
+    // 
     // Only scroll on search results page to load more cards
     if (/\/jobs\/search\//.test(url)) {
       try {
         await this.__autoScroll(page);
-      } catch {}
+      } catch { }
     }
     return await page.content();
   }
 
-  private async __autoScroll(page : Page) {
+  private async __autoScroll(page: Page) {
     const maxIterations = 40; // ~6s with 150ms pauses
     let lastHeight = await page.evaluate(() => document.body.scrollHeight);
     for (let i = 0; i < maxIterations; i++) {
@@ -188,18 +193,18 @@ class Scrapper {
     }
   }
 
-  private __delay(ms : number) {
+  private __delay(ms: number) {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
-  private __cleanText(text = ""){
+  private __cleanText(text = "") {
     if (!text) return "";
     return String(text).replace(/\s+/g, " ").trim();
   }
-  private __getJobLinks(htmlData : string) : string[]{
+  private __getJobLinks(htmlData: string): string[] {
     const $ = cheerio.load(htmlData.toString());
     const jobSet = new Set();
-    const links : string[] = [];
+    const links: string[] = [];
     $('ul.jobs-search__results-list a.base-card__full-link').each((_, el) => {
       const link = $(el).attr("href") || "";
       if (link.length === 0) return;
@@ -212,7 +217,7 @@ class Scrapper {
 
   }
 
-  private __normalizeLinkedinLink(link = ""){
+  private __normalizeLinkedinLink(link = "") {
     if (!link) return link;
     try {
       const url = new URL(link.startsWith("http") ? link : `https://${link}`);
@@ -224,7 +229,7 @@ class Scrapper {
   }
 
 
-  private async __extractJobDetails(html : string){
+  private async __extractJobDetails(html: string) {
     const $ = cheerio.load(html);
     const companyDetailsDiv = $('.topcard__flavor-row');
     const jobTitle = this.__cleanText($('.top-card-layout__title, h1.topcard__title').first().text());
