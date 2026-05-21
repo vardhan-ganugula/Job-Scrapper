@@ -57,6 +57,7 @@ class Scrapper {
       result = details;
     }
     catch (error: unknown) {
+      console.log(error)
       console.error(`Error processing job link ${link}:`, (error as Error)?.message);
     }
     finally {

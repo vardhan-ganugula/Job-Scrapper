@@ -1,0 +1,30 @@
+
+EXPERIENCE
+SoraMinds | Full-Stack Developer
+Aug 2025 - Jan 2026 | Remote
+• Developed and maintained full-stack applications, contributing to both front-end and back-end features.
+• Implemented WebSocket-based real-time communication to improve application responsiveness and system performance.
+• Deployed and managed applications on AWS EC2 virtual machines, supporting production environments.
+• Collaborated with cross-functional teams to integrate LLM responses into full-stack applications.
+
+PROJECTS
+Job Listener (GitHub)
+• Built an AI-powered automation agent for personalized job recommendations.
+• Integrated resume-based skill matching using AI for relevance scoring. Automated daily job search and notifications via Telegram bot.
+• Tech Stack: MongoDB, Express.js, Node.js, Telegram API, WebScraping
+
+EduAgentX (GitHub)
+• Integrated RPA workflows with the MERN stack for automating leave approvals, evaluations, and result distribution.
+• Collaborated with the RPA team to connect automation solutions with a MERN-based platform for educational use.
+• Tech Stack: Express.js, React.js, Node.js
+
+EDUCATION
+CMR Institute of Technology
+• B.Tech in Computer Science and Engineering | Nov 2022 - Present | CGPA: 8.78 / 10
+Sri Chaitanya Junior College
+• Higher Secondary Education | Mar 2020 - Apr 2022 | CGPA: 9.48 / 10
+
+SKILLS
+• Languages/Frameworks: Python, JavaScript, Express.js, React.js, HTML, CSS
+• Databases: MySQL, MongoDB
+• Tools: GitHub, VS Code, Postman, Docker, AWS VM2

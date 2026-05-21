@@ -1,5 +1,6 @@
 import OpenAI from "openai";
 import { openaiApiKey } from "@utils/config.util.js";
+import { loadResume } from "@/utils/tools.util.js";
 
 export type ModelType = "gemini-2.5-flash" | "gemini-2.0-flash" | "gpt-4" | "gemini-3.1-pro-preview" | "gemma-4-26b-a4b-it" | "gemini-flash-latest" | "gemini-2.5-flash-lite";
 
@@ -116,35 +117,8 @@ Perform an ATS gap analysis by comparing the candidate resume against the target
 ${desc1}
 
 [CANDIDATE RESUME]
-EXPERIENCE
-SoraMinds | Full-Stack Developer
-Aug 2025 - Jan 2026 | Remote
-• Developed and maintained full-stack applications, contributing to both front-end and back-end features.
-• Implemented WebSocket-based real-time communication to improve application responsiveness and system performance.
-• Deployed and managed applications on AWS EC2 virtual machines, supporting production environments.
-• Collaborated with cross-functional teams to integrate LLM responses into full-stack applications.
 
-PROJECTS
-Job Listener (GitHub)
-• Built an AI-powered automation agent for personalized job recommendations.
-• Integrated resume-based skill matching using AI for relevance scoring. Automated daily job search and notifications via Telegram bot.
-• Tech Stack: MongoDB, Express.js, Node.js, Telegram API, WebScraping
-
-EduAgentX (GitHub)
-• Integrated RPA workflows with the MERN stack for automating leave approvals, evaluations, and result distribution.
-• Collaborated with the RPA team to connect automation solutions with a MERN-based platform for educational use.
-• Tech Stack: Express.js, React.js, Node.js
-
-EDUCATION
-CMR Institute of Technology
-• B.Tech in Computer Science and Engineering | Nov 2022 - Present | CGPA: 8.78 / 10
-Sri Chaitanya Junior College
-• Higher Secondary Education | Mar 2020 - Apr 2022 | CGPA: 9.48 / 10
-
-SKILLS
-• Languages/Frameworks: Python, JavaScript, Express.js, React.js, HTML, CSS
-• Databases: MySQL, MongoDB
-• Tools: GitHub, VS Code, Postman, Docker, AWS VM2
+${loadResume()}
 
 [OUTPUT FORMAT]
 Return a JSON object that strictly adheres to the schema below. No conversational filler text outside the JSON structure.
@@ -166,7 +140,8 @@ Return a JSON object that strictly adheres to the schema below. No conversationa
   "strengths": ["Grounded point 1", "Grounded point 2"],
   "weaknesses": ["Grounded point 1", "Grounded point 2"],
   "improvement_suggestions": ["Actionable step 1", "Actionable step 2"],
-  "coverLetter" : "cover leter information for that job for the user in markdown format"
+  "coverLetter" : "cover leter information for that job for the user in markdown format but it should be around 250 words and brief",
+  "suggestedResume" : "suggested resume text"
 }
 `
         }
